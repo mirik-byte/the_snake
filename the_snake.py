@@ -1,7 +1,6 @@
 """Импортируем модуль для игры и для определения случайных элементов."""
 
 from random import choice, randint
-
 import pygame as pg
 
 # Константы для размеров поля и сетки:
@@ -68,7 +67,6 @@ class Apple(GameObject):
     """Класс для представления яблока в игре."""
 
     def __init__(self, snake_positions=None):
-
         if snake_positions is None:
             snake_positions = []
         # Генерируем случайную позицию и передаем ее вместе с цветом в
@@ -80,8 +78,10 @@ class Apple(GameObject):
     def randomize_position(snake_positions):
         """Генерирует случайную позицию на игровом поле."""
         while True:
-            new_position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-                            randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+            new_position = (
+                randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+            )
             if new_position not in snake_positions:
                 return new_position
 
@@ -98,7 +98,7 @@ class Snake(GameObject):
         start_position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         super().__init__(start_position, SNAKE_COLOR)
         self.length = 1
-        self.positions = [self.position]  # Позиция из родительского класса
+        self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = None
         self.last = None
@@ -113,31 +113,21 @@ class Snake(GameObject):
         """Перемещает змейку и обрабатывает столкновения."""
         head_x, head_y = self.get_head_position()
 
-        # Вычисляем новую позицию головы
-        # Так как направления движения представляют из себя кортежи, то мы их
-        # можем использовать для упрощённого вычисления координат змеи
-        # С помощью оператора % происходит перемещение змеи через рамки экрана
         direction_x, direction_y = self.direction
         head_x = (head_x + direction_x * GRID_SIZE) % SCREEN_WIDTH
         head_y = (head_y + direction_y * GRID_SIZE) % SCREEN_HEIGHT
         new_head = (head_x, head_y)
 
-        # Добавляем новую голову
         self.positions.insert(0, new_head)
-
-        # Всегда удаляем последний сегмент (логика роста в main)
         self.last = self.positions.pop()
 
     def draw(self):
         """Отрисовывает змейку на экране."""
-        # Отрисовка всех сегментов кроме головы
         for position in self.positions[:-1]:
             self.draw_cell(screen, position, self.body_color)
 
-        # Отрисовка головы
         self.draw_cell(screen, self.positions[0], self.body_color)
 
-        # Затирание последнего сегмента
         if self.last:
             last_rect = pg.Rect(self.last, (GRID_SIZE, GRID_SIZE))
             pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
@@ -151,7 +141,7 @@ class Snake(GameObject):
         self.length = 1
         start_position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.positions = [start_position]
-        self.position = start_position  # Обновляем позицию
+        self.position = start_position
         self.direction = choice((RIGHT, LEFT, DOWN, UP))
         self.next_direction = None
         self.last = None
@@ -164,9 +154,6 @@ def handle_keys(game_object):
             pg.quit()
             raise SystemExit
         elif event.type == pg.KEYDOWN:
-            # Словарь для обработки смены направления
-            # Ключ - кортеж (текущее_направление, нажатая_клавиша)
-            # Значение - новое направление
             direction_map = {
                 (UP, pg.K_RIGHT): RIGHT,
                 (UP, pg.K_LEFT): LEFT,
@@ -178,7 +165,6 @@ def handle_keys(game_object):
                 (RIGHT, pg.K_DOWN): DOWN
             }
 
-            # Проверяем возможное изменение направления
             new_direction = direction_map.get(
                 (game_object.direction, event.key)
             )
@@ -202,16 +188,14 @@ def main():
         # Проверка поедания яблока
         if snake.get_head_position() == apple.position:
             apple.position = apple.randomize_position(snake.positions)
-            # Добавляем сегмент змейке - возвращаем удаленный сегмент
             snake.positions.append(snake.last)
             snake.length += 1
 
         # Проверка столкновения с собой
         if snake.get_head_position() in snake.positions[1:]:
-            # Новая строка - очистка экрана:
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
-            apple = Apple(snake.positions)  # Создаем новое яблоко при сбросе
+            apple = Apple(snake.positions)
 
         apple.draw()
         snake.draw()
