@@ -1,7 +1,9 @@
 """Импортируем модуль для игры и для определения случайных элементов."""
 
 from random import choice, randint
+
 import pygame as pg
+
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
