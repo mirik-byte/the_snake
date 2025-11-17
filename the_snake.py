@@ -1,6 +1,6 @@
 """Импортируем модуль для игры и для определения случайных элементов."""
 
-from random import choice, randint
+from random import randint
 
 import pygame as pg
 
@@ -72,7 +72,7 @@ class GameObject:
     def draw(self):
         """Метод для отрисовки объекта."""
         raise NotImplementedError(
-            'Данный метод должен быть переопределен в дочернем классе'
+            'Данный метод должен быть переопределен в дочернем классе.'
         )
 
 
@@ -102,11 +102,9 @@ class Snake(GameObject):
     """Класс для представления змейки в игре."""
 
     def __init__(self):
-        # Явно инициализируем все атрибуты перед вызовом reset()
+        # Инициализируем все атрибуты перед вызовом reset()
         self.positions = []
         self.direction = RIGHT
-        self.next_direction = None
-        self.last = None
         super().__init__(body_color=SNAKE_COLOR)
         self.reset()
 
@@ -147,7 +145,6 @@ class Snake(GameObject):
         """Сбрасывает состояние змейки до начального."""
         self.length = 1
         self.positions = [self.position]
-        self.direction = choice((RIGHT, LEFT, DOWN, UP))
         self.next_direction = None
         self.last = None
 
@@ -187,7 +184,7 @@ def main():
             snake.length += 1
 
         # Проверка столкновения с собой
-        if snake.get_head_position() in snake.positions[1:]:
+        if snake.get_head_position() in snake.positions[4:]:
             snake.reset()
             apple.randomize_position(snake.positions)
 
